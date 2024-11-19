@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "plasmid_sequencing"
+description = "Genome/Plasmid assembly in Python."
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+    {name = "Joseph McKenna"}
+]
+maintainers = [
+    {name = "Joseph McKenna", email = "jkmckenna@berkeley.edu"}
+]
+keywords = [
+  "plasmid-sequencing",
+  "genome-assembly",
+  "nanopore"
+]
+readme = "README.md"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+]
+dynamic = ["version"]
+
+[project.urls]
+Source = "https://github.com/jkmckenna/plasmid_sequencing"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/plasmid_sequencing"]
+
+[tool.hatch.version]
+path = "src/plasmid_sequencing/_version.py"
