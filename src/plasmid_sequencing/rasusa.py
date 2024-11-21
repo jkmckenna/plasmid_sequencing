@@ -21,7 +21,7 @@ def rasusa(input, coverage=200, genome_size='10kb', iterations=3):
     output_file_list = []
     for iteration in range(iterations):
         output_basename = split_basename[0] + '_' + f'rasusa_subsample_{iteration}' + '.fastq.gz'
-        output_path = os.path.join(os.path.pardir(input), output_basename)
+        output_path = os.path.join(os.path.dirname(input), output_basename)
             
         command_list = ['rasusa', 'reads', input, '-c', coverage, '-g', genome_size]
         random_seed = ['-s', 1]

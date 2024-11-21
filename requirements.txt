@@ -1,0 +1,4 @@
+# Essential packages
+numpy>=1.22.0,<2
+pysam>=0.19.1
+scipy>=1.7.3

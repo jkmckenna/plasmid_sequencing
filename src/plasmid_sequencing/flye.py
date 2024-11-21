@@ -29,7 +29,7 @@ def flye(input, min_overlap=1000, nano_hq=False, nano_raw=0.1, output='0'):
         command_list += ['--nano_raw']
         read_error_list = ['--read-error', nano_raw]
 
-    parent_dir = os.path.pardir(input)
+    parent_dir = os.path.dirname(input)
     output_dir_basename = f'flye_{output}'
     output_path = os.path.join(parent_dir, output_dir_basename)
     output_list = ['-o', output_path]

@@ -39,7 +39,7 @@ def porechop(input, recurse=True, output_suffix='porechopped', extra_end_trim=2,
         input_basename = os.path.basename(fastq)
         split_basename = input_basename.split('.fastq')
         output_basename = split_basename[0] + '_' + output_suffix + '.fastq.gz'
-        output_path = os.path.join(os.path.pardir(fastq), output_basename)
+        output_path = os.path.join(os.path.dirname(fastq), output_basename)
         command_list = ['porechop', '-i', fastq, '-o', output_path]
         command_list += options
 

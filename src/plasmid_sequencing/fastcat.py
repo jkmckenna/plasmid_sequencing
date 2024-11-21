@@ -32,24 +32,27 @@ def fastcat(input, recurse=True, output_directory='concatenated_fastqs', file_su
 
     if output_directory:
         output_command_list = ['-d', output_directory]
-        command_list.append(output_command_list)
+        command_list += output_command_list
     
     if file_summaries:
         output_command_list = ['-f', file_summaries]
-        command_list.append(output_command_list)   
+        command_list += output_command_list
 
     if min_length:
-        output_command_list = ['-a', min_length]
-        command_list.append(output_command_list)  
+        output_command_list = ['-a', str(min_length)]
+        command_list += output_command_list
 
     if max_length:
-        output_command_list = ['-b', max_length]
-        command_list.append(output_command_list)  
+        output_command_list = ['-b', str(max_length)]
+        command_list += output_command_list 
 
     if min_quality:
-        output_command_list = ['-q', min_quality]
-        command_list.append(output_command_list)      
+        output_command_list = ['-q', str(min_quality)]
+        command_list += output_command_list     
 
-    command_list.append(input)           
+    command_list.append(input)   
+    command_string = ' '.join(command_list)
+
+    print(f"Running {command_string}")        
 
     subprocess.run(command_list)

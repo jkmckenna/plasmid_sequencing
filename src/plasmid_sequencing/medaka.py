@@ -16,7 +16,7 @@ def medaka(input, draft, output=0, threads=4):
     import subprocess
     import os
 
-    parent_dir = os.path.pardir(draft)
+    parent_dir = os.path.dirname(draft)
     output_dir_basename = f'medaka_consensus_{output}'
     output_path = os.path.join(parent_dir, output_dir_basename)
 
