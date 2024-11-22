@@ -3,15 +3,15 @@ import subprocess
 import os
 from pathlib import Path
 
-def flye(input, min_overlap=1000, nano_hq=False, nano_raw=0.1, output='0', output_dir=False):
+def flye(input, min_overlap=1000, nano_hq=0.02, nano_raw=False, output='0', output_dir=False):
     """
     De novo genome assembly
     
     Parameters:
         input (str): Path to the input fastq.
         min_overlap (bool | int): --min-overlap specifies the minimum overlap needed between reads.
-        nano_hq (bool): --nano-hq specifies that the reads are nanopore Q20+ reads. This preceeds the filepath to the input fastq.
-        nano_raw (bool | float): --nano-raw if a --read_error value is passed. --read-error specifies proportion of error rate.
+        nano_hq (bool | float): --nano-hq specifies that the reads are nanopore Q20+ reads. This preceeds the filepath to the input fastq. --read-error specifies proportion of error rate.
+        nano_raw (bool): --nano-raw. 
         output (str): -o specifies the output directory suffix.
         output_dir (bool | str): If False, just output subsample into the same directory as the input file. If a string is passed, pass it into that output directory.
 
@@ -27,9 +27,9 @@ def flye(input, min_overlap=1000, nano_hq=False, nano_raw=0.1, output='0', outpu
         
     if nano_hq:
         command_list += ['--nano-hq']
+        read_error_list = ['--read-error', str(nano_hq)]
     elif nano_raw:
-        command_list += ['--nano_raw']
-        read_error_list = ['--read-error', str(nano_raw)]
+        command_list += ['--nano-raw']
 
     parent_dir = os.path.dirname(input)
     output_dir_basename = f'flye_{output}'

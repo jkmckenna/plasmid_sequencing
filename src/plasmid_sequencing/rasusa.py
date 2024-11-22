@@ -30,7 +30,7 @@ def rasusa(input, coverage=200, genome_size='10kb', iterations=3, output_dir=Fal
             output_path = os.path.join(os.path.dirname(input), output_basename)
             
         command_list = ['rasusa', 'reads', input, '-c', str(coverage), '-g', genome_size]
-        random_seed = ['-s', str(1)]
+        random_seed = ['-s', str(iteration)]
         output_list = ['-o', output_path]
 
         command_list += random_seed + output_list

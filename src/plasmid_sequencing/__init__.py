@@ -3,7 +3,7 @@ from .demux import demux
 from .extract_histogram_stats import extract_histogram_stats
 from .fastcat import fastcat
 from .filter_fastqs import process_directory
-from .flye import flye
+from .flye import flye, recursive_flye
 from .gzip_fastqs import gzip_fastqs
 from .make_dirs import make_dirs
 from .nest_file import nest_file
@@ -16,6 +16,7 @@ __all__ = [
     "extract_histogram_stats",
     'fastcat',
     "flye",
+    "recursive_flye",
     "gzip_fastqs",
     "make_dirs",
     "nest_file",
