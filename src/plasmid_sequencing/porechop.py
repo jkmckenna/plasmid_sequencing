@@ -10,6 +10,9 @@ def porechop(input, recurse=True, output_suffix='porechopped', extra_end_trim=2,
         output_suffix (str): String to append to the end of the input basename.
         extra_end_trim (bool | int): How many extra bases to remove adjacent to the adapter.
         discard_middle (bool): Whether to discard reads that have middle adapters
+
+    Return:
+        None
     """
     import subprocess
     import os
@@ -18,7 +21,7 @@ def porechop(input, recurse=True, output_suffix='porechopped', extra_end_trim=2,
         fastq_files = []
         for root, _, files in os.walk(input):
             for file in files:
-                if file.endswith('.fastq') or file.endswith('.fastq.gz'):
+                if file.endswith('.fastq') or file.endswith('.fastq.gz') and 'porechop' not in file:
                     fastq_files.append(os.path.join(root, file))
     elif os.path.isdir(input):
         fastq_files = [file for file in os.listdir(input) if '.fastq' in file]
@@ -30,7 +33,7 @@ def porechop(input, recurse=True, output_suffix='porechopped', extra_end_trim=2,
     options = []
 
     if extra_end_trim:
-        options.append(['--extra_end_trim', 2])
+        options += ['--extra_end_trim', str(extra_end_trim)]
 
     if discard_middle:
         options.append('--discard_middle')
@@ -44,3 +47,5 @@ def porechop(input, recurse=True, output_suffix='porechopped', extra_end_trim=2,
         command_list += options
 
         subprocess.run(command_list)
+
+    return
