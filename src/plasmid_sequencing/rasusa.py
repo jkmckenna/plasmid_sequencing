@@ -29,7 +29,7 @@ def rasusa(input, coverage=200, genome_size='10kb', iterations=3, output_dir=Fal
         else:
             output_path = os.path.join(os.path.dirname(input), output_basename)
             
-        command_list = ['rasusa', 'reads', input, '-c', str(coverage), '-g', genome_size]
+        command_list = ['rasusa', 'reads', str(input), '-c', str(coverage), '-g', genome_size]
         random_seed = ['-s', str(iteration)]
         output_list = ['-o', output_path]
 
@@ -44,7 +44,7 @@ def rasusa(input, coverage=200, genome_size='10kb', iterations=3, output_dir=Fal
 
     return output_file_list
 
-def recursive_rasusa(input_dir, output_dir='subsampled_trimmed_filtered_demuliplexed_fastqs', coverage=200, genome_size='10kb', iterations=3):
+def recursive_rasusa(input_dir, output_dir='subsampled_trimmed_filtered_demuliplexed_fastqs', coverage=200, genome_size='10kb', iterations=3, search_string='porechop'):
     """
     Recursively search a directory for all fastq files. Produce subsamples of a given coverage for each FASTQ.
 
@@ -72,7 +72,7 @@ def recursive_rasusa(input_dir, output_dir='subsampled_trimmed_filtered_demulipl
         output_subdir.mkdir(parents=True, exist_ok=True)
 
         for file in files:
-            if file.endswith(".fastq") or file.endswith(".fastq.gz"):
+            if file.endswith(".fastq") or file.endswith(".fastq.gz") and search_string in file:
                 input_file = Path(root) / file
 
                 output_file_list = rasusa(input_file, coverage, genome_size, iterations, output_subdir)

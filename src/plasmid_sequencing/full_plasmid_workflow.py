@@ -33,7 +33,7 @@ def full_plasmid_workflow(input_bam):
     porechop(demultiplexed_filtered_fastq_dir, recurse=True, output_suffix='porechopped', extra_end_trim=2, discard_middle=True)
 
     #4) Rasusa the porechopped files to create subsamples
-    rasusa_root_dir, rasusa_sample_file_list = recursive_rasusa(demultiplexed_filtered_fastq_dir, output_dir='subsampled_trimmed_filtered_demuliplexed_fastqs', coverage=200, genome_size='10kb', iterations=3)
+    rasusa_root_dir, rasusa_sample_file_list = recursive_rasusa(demultiplexed_filtered_fastq_dir, output_dir='subsampled_trimmed_filtered_demuliplexed_fastqs', coverage=200, genome_size='10kb', iterations=3, search_string='porechop')
 
     #5) For each subsampled FASTQ, produce a de novo assembled scaffold using flye
     flye_root_dir, flye_sample_list = recursive_flye(rasusa_root_dir, min_overlap=1000, nano_hq=False, nano_raw=0.1)
