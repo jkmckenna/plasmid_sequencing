@@ -36,13 +36,16 @@ def write_histogram_to_file(data, bin_size, output_path, label, filter_threshold
     """
     Generate and save histogram data to a text file.
     
-    Args:
+    Params:
         data (list): List of numerical data (e.g., read lengths or quality scores).
         bin_size (int): Bin size for histogram.
         output_path (Path): Path to the output file.
         label (str): Label for the histogram (e.g., 'Length' or 'Quality').
         filter_threshold (float): Threshold for read filtering on a given data metric
         n_passed (int): Number of reads passing the current QC metric
+
+    Returns:
+        estimated_construct_length (int): Estimated construct length based on read length peak calling
     """
     from scipy.signal import find_peaks
 
@@ -56,6 +59,8 @@ def write_histogram_to_file(data, bin_size, output_path, label, filter_threshold
     mean_annotation_y = threshold * 1.8
     distance_threshold = range_vals // 20
     peaks, _ = find_peaks(histogram, height=threshold, prominence=threshold, distance=distance_threshold)
+
+    estimated_construct_length = (edges[peaks[-1]] + edges[peaks[-1] + 1]) / 2 # Use the peak calling to get the largest read length peak. If the sample is not over-tagmented in the library-prep, this is likely the plasmid size
 
     txt_path = output_path / f"{label.lower().replace(' ', '_')}s.txt"
 
@@ -112,9 +117,16 @@ def write_histogram_to_file(data, bin_size, output_path, label, filter_threshold
         plt.savefig(png_path)
         plt.close()
         print(f"{label} histogram PNG saved to: {png_path}")
+    
+    return estimated_construct_length
 
 def filter_fastq_and_generate_histograms(input_path, output_path, hist_dir, min_length, min_mean_quality, save_png):
-    """Filter reads in a FASTQ file and generate histogram data for read lengths and quality."""
+    """
+    Filter reads in a FASTQ file and generate histogram data for read lengths and quality.
+
+    Returns:
+        estimated_construct_length (int): Estimated construct length based on peak calling of read lengths
+    """
     read_lengths = []
     quality_scores = []
     n_passed_length_threshold = 0
@@ -139,11 +151,19 @@ def filter_fastq_and_generate_histograms(input_path, output_path, hist_dir, min_
                 out_fq.write(f"{header}\n{sequence}\n{separator}\n{quality}\n")
 
     # Write histogram data to text files
-    write_histogram_to_file(read_lengths, 1, hist_dir, "Read Length", min_length, n_passed_length_threshold, save_png)
-    write_histogram_to_file(quality_scores, 1, hist_dir, "Quality Score", min_mean_quality, n_passed_quality_threshold, save_png)
+    estimated_construct_length = write_histogram_to_file(read_lengths, 1, hist_dir, "Read Length", min_length, n_passed_length_threshold, save_png)
+    best_quality_mode = write_histogram_to_file(quality_scores, 1, hist_dir, "Quality Score", min_mean_quality, n_passed_quality_threshold, save_png)
+
+    return estimated_construct_length
 
 def process_directory(input_dir, output_dir='filtered_demuliplexed_fastqs', min_length=500, min_mean_quality=12, save_png=True):
-    """Recursively iterate over FASTQ files in a directory and process them."""
+    """
+    Recursively iterate over FASTQ files in a directory and process them.
+    
+    Return:
+        output_dir
+        sample_fastq_to_read_length_mapping (dict): For each processed FASTQ, maps the estimated construct size from that FASTQ.
+    """
     from .gzip_fastqs import gzip_fastqs
     from .extract_histogram_stats import extract_histogram_stats
 
@@ -152,6 +172,8 @@ def process_directory(input_dir, output_dir='filtered_demuliplexed_fastqs', min_
     parent_dir = input_dir.parent
     output_dir = parent_dir / Path(output_dir)
     output_dir.mkdir(exist_ok=True)
+
+    sample_fastq_to_read_length_mapping = {}
 
     for root, _, files in os.walk(input_dir):
         rel_path = Path(root).relative_to(input_dir)
@@ -168,7 +190,10 @@ def process_directory(input_dir, output_dir='filtered_demuliplexed_fastqs', min_
                 hist_dir.mkdir(exist_ok=True)
 
                 print(f"Processing: {input_file} -> {output_file}")
-                filter_fastq_and_generate_histograms(input_file, output_file, hist_dir, min_length, min_mean_quality, save_png)
+                estimated_construct_length = filter_fastq_and_generate_histograms(input_file, output_file, hist_dir, min_length, min_mean_quality, save_png)
+                sample_fastq_to_read_length_mapping[output_file] = estimated_construct_length
 
     extract_histogram_stats(output_dir)
     gzip_fastqs(output_dir)
+
+    return output_dir, sample_fastq_to_read_length_mapping

@@ -22,12 +22,13 @@ def full_plasmid_workflow(input_bam):
     from .porechop import porechop
     from .rasusa import recursive_rasusa
     from .flye import recursive_flye
+    from .flye_polish import recursive_flye_polish
 
     # 1) Demultiplex the input BAM file.
     demultiplexed_fastq_dir = demux(input_bam, barcode_kit='SQK-RBK114-96', split_dir='demultiplexed_fastqs', emit_fastq=True)
 
     # 2) Filter the demultiplexed FASTQs on read quality and read length thresholds.
-    demultiplexed_filtered_fastq_dir = process_directory(demultiplexed_fastq_dir, output_dir='filtered_demuliplexed_fastqs', min_length=500, min_mean_quality=12, save_png=True)
+    demultiplexed_filtered_fastq_dir, sample_to_read_mapping = process_directory(demultiplexed_fastq_dir, output_dir='filtered_demuliplexed_fastqs', min_length=500, min_mean_quality=12, save_png=True)
 
     # 3) Porechop the filtered_demultiplexed_fastqs
     porechop(demultiplexed_filtered_fastq_dir, recurse=True, output_suffix='porechopped', extra_end_trim=2, discard_middle=True)
@@ -37,6 +38,9 @@ def full_plasmid_workflow(input_bam):
 
     #5) For each subsampled FASTQ, produce a de novo assembled scaffold using flye
     flye_root_dir, flye_sample_list = recursive_flye(rasusa_root_dir, min_overlap=1000, nano_hq=False, nano_raw=0.1)
+
+    #6) Polish all of the flye assemblies using flye.
+    recursive_flye_polish(demultiplexed_filtered_fastq_dir, flye_root_dir)
 
 
 

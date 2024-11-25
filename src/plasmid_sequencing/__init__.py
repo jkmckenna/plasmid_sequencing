@@ -9,6 +9,10 @@ from .make_dirs import make_dirs
 from .nest_file import nest_file
 from .porechop import porechop
 from .rasusa import rasusa, recursive_rasusa
+from .medaka import medaka, recursive_medaka
+from .flye_polish import flye_polish, recursive_flye_polish
+from .copy_files import copy_files
+from .delete_empty_dirs import delete_empty_dirs
 
 __all__ = [
     "canoncall",
@@ -23,5 +27,11 @@ __all__ = [
     'porechop',
     "process_directory",
     "rasusa",
-    "recursive_rasusa"
+    "recursive_rasusa",
+    "medaka",
+    "recursive_medaka",
+    "flye_polish",
+    "recursive_flye_polish",
+    "copy_files",
+    "delete_empty_dirs"
     ]

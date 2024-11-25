@@ -62,7 +62,7 @@ def recursive_flye(input_dir, output_dir='subsampled_flye_assemblies', min_overl
 
     Returns:
         output_dir (str): String representing the root directory that outputs will be stored in.
-        output_file_list_of_lists (list of lists): List of lists containing the replicate filepaths for all sample FASTQs.
+        output_file_list (list of str): List of str containing the filepaths to all flye assemblies.
     """
     input_dir = Path(input_dir)
     parent_dir = input_dir.parent
